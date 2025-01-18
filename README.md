@@ -4,6 +4,9 @@
 
 This is a small package with various utilites to do with tensorflow.
 
+(pip install tensorflowtools)
+
+
 **Disclaimer**: This package is not affiliated with or endorsed by TensorFlow, Google, or Huggingface. It is an independent open-source project built to integrate TensorFlow with various tools.
 
 ## License
