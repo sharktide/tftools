@@ -3,9 +3,9 @@ from pathlib import Path
 import pkg_resources
 
 # Define the path to the models directory in the package's data folder
-PACKAGE_DATA_DIR = Path(pkg_resources.resource_filename('tftools', 'data')) / "models"
+PACKAGE_DATA_DIR = Path(pkg_resources.resource_filename('tensorflowtools', 'data')) / "models" / "huggingface"
 
-def load_model_from_cache(username: str, repository: str,  model_name: str):
+def load_from_hf_cache(username: str, repository: str,  model_name: str):
     """
     Loads a TensorFlow model from the package's data directory.
 
@@ -14,7 +14,7 @@ def load_model_from_cache(username: str, repository: str,  model_name: str):
     """
     model_path = PACKAGE_DATA_DIR / username / repository / model_name
     if not model_path.exists():
-        raise FileNotFoundError(f"The model {model_name} is not found in the package data directory.")
+        raise FileNotFoundError(f"The model {model_name} is not found in the huggingface package data directory.")
     
     # Load the model
     model = tf.keras.models.load_model(model_path)

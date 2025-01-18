@@ -2,8 +2,8 @@ import unittest
 import os
 from pathlib import Path
 import tensorflow as tf
-from tftools.hftools import download_model_from_huggingface
-from tftools.kerastools import load_model_from_cache
+from tensorflowtools.hftools import download_model_from_huggingface
+from tensorflowtools.kerastools import load_model_from_cache
 
 class TestHFUtils(unittest.TestCase):
     

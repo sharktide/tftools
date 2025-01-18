@@ -3,9 +3,11 @@ from pathlib import Path
 from huggingface_hub import hf_hub_download
 import pkg_resources
 import warnings
+import shutil
+
 
 # Define the directory to store models in the package’s data directory
-PACKAGE_DATA_DIR = Path(pkg_resources.resource_filename('tftools', 'data')) / "models"
+PACKAGE_DATA_DIR = Path(pkg_resources.resource_filename('tensorflowtools', 'data')) / "models" / "huggingface"
 PACKAGE_DATA_DIR.mkdir(parents=True, exist_ok=True)  # Create the directory if it doesn't exist
 
 def download_model_from_huggingface(username: str, repository: str, model_id: str):
@@ -83,6 +85,12 @@ def download_model_from_huggingface(username: str, repository: str, model_id: st
         os.rename(pconfigpath, pconfig_cache_path)
     
     return model_cache_path
+
+def clear_model_cache():
+    shutil.rmtree(PACKAGE_DATA_DIR)
+    PACKAGE_DATA_DIR.mkdir(parents=True, exist_ok=True)  # Create the directory if it doesn't exist
+
+
 
 #Copyright 2025 Rihaan Meher
 #
