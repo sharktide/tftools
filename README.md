@@ -2,7 +2,7 @@
 
 ### TFtools Latest
 
-    pip install tensorflowtools
+    pip install --upgrade tensorflowtools
 
 ### TFtools Nightly
 
