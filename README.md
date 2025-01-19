@@ -54,7 +54,7 @@ This project uses the following open-source libraries:
 
 This downloads a model named tf_model.h5 or tf_model.keras from huggingface to the tensorflowtools data directory. It can be used with the load_from_hf_cache function in the kerastools submodule
 
-##### example
+##### Example
 
     import tensorflowtools
     tensorflowtools.hftools.download_model_from_huggingface("sharktide", "recyclebot0", "sharktide/recyclebot0")
@@ -66,6 +66,8 @@ This downloads a model named tf_model.h5 or tf_model.keras from huggingface to t
 
 This clears the model cache; all downloaded models and configuration files will be deleted
 
+##### Example
+
     import tensorflowtools
     tensorflowtools.hftools.download_model_from_huggingface("sharktide", "recyclebot0", "sharktide/recyclebot0")
     model = tensorflowtools.kerastools.load_from_hf_cache("sharktide", "recyclebot0", "tf_model.h5")
@@ -75,5 +77,23 @@ This clears the model cache; all downloaded models and configuration files will 
         model = tensorflowtools.kerastools.load_from_hf_cache("sharktide", "recyclebot0", "tf_model.h5")
     except:
         print("It worked!")
+
+</details>
+
+## kerastools
+
+<details>
+<summary>Functions</summary>
+
+#### load_from_hf_cache(username, repository, filename)
+
+This loads a model using tf.keras.models.load_model() from tensorflowtools's cache. Use with the hftools submodule to download a model to the cache.
+
+##### Example
+
+    import tensorflowtools
+    tensorflowtools.hftools.download_model_from_huggingface("sharktide", "recyclebot0", "sharktide/recyclebot0")
+    model = tensorflowtools.kerastools.load_from_hf_cache("sharktide", "recyclebot0", "tf_model.h5")
+    model.summary
 
 </details>
