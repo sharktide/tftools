@@ -43,16 +43,22 @@ This project uses the following open-source libraries:
 
 
 
-# Modules
+# Submodules
 
 ## hftools
 
 <details>
+<summary>Functions</summary>
 
-<summary>
+#### download_model_from_huggingface(username, repository, model_id)
 
-Coming Soon!
+This downloads a model named tf_model.h5 or tf_model.keras from huggingface to the tensorflowtools data directory. It can be used with the load_from_hf_cache function in the kerastools submodule
 
-</summary>
+##### example
+
+    import tensorflowtools
+    tensorflowtools.hftools.download_model_from_huggingface("sharktide", "recyclebot0", "sharktide/recyclebot0")
+
+
 
 </details>
