@@ -6,7 +6,7 @@
 
 ### TFtools Nightly
 
-    pip install -i https://test.pypi.org/simple/ tftools
+    pip install --upgrade -i https://test.pypi.org/simple/ tensorflowtools
 
 This is a small package with various utilites to do with tensorflow.
 
