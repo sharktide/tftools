@@ -58,7 +58,22 @@ This downloads a model named tf_model.h5 or tf_model.keras from huggingface to t
 
     import tensorflowtools
     tensorflowtools.hftools.download_model_from_huggingface("sharktide", "recyclebot0", "sharktide/recyclebot0")
+    model = tensorflowtools.kerastools.load_from_hf_cache("sharktide", "recyclebot0", "tf_model.h5")
+    model.summary
 
 
+#### clear_model_cache()
+
+This clears the model cache; all downloaded models and configuration files will be deleted
+
+    import tensorflowtools
+    tensorflowtools.hftools.download_model_from_huggingface("sharktide", "recyclebot0", "sharktide/recyclebot0")
+    model = tensorflowtools.kerastools.load_from_hf_cache("sharktide", "recyclebot0", "tf_model.h5")
+    model.summary
+    tensorflowtools.hftools.clear_model_cache()
+    try:
+        model = tensorflowtools.kerastools.load_from_hf_cache("sharktide", "recyclebot0", "tf_model.h5")
+    except:
+        print("It worked!")
 
 </details>
