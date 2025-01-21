@@ -231,6 +231,10 @@ Gives basic starter architecture for a basic autencoder model.
 
 </details>
 
+
+---
+
+
 ## Contributing
 
 If you’d like to contribute to this package, feel free to fork the repository, make your changes, and submit a pull request. We welcome improvements, bug fixes, and additional models.
