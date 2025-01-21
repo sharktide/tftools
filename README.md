@@ -173,6 +173,8 @@ This returns a basic convolutional neural network for image classification. The 
     # Train the model
     model.fit(x_train, y_train, epochs=10, batch_size=32)
 
+</details>
+
 <details>
 <summary>basic_lstm(input_shape, output_dim, loss, compile_model=True)</summary>
 
