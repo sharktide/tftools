@@ -50,6 +50,8 @@ This project uses the following open-source libraries:
 <details>
 <summary>Functions</summary>
 
+---
+
 <details>
 <summary>download_model_from_huggingface(username, repository, model_id)</summary>
 
@@ -89,6 +91,8 @@ This clears the model cache; all downloaded models and configuration files will 
 
 <details>
 <summary>Functions</summary>
+
+---
 
 <details>
 <summary>load_from_hf_cache(username, repository, filename)</summary>
@@ -227,7 +231,7 @@ Gives basic starter architecture for a basic autencoder model.
 
 </details>
 
-# Contributing
+## Contributing
 
 If you’d like to contribute to this package, feel free to fork the repository, make your changes, and submit a pull request. We welcome improvements, bug fixes, and additional models.
 
