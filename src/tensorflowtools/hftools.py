@@ -23,18 +23,17 @@ def download_model_from_huggingface(username: str, repository: str, model_id: st
     
 
     if os.path.exists((PACKAGE_DATA_DIR / username / repository / "tf_model.h5")):
-        print(f"File {(PACKAGE_DATA_DIR / username / repository / "tf_model.h5")} already exists. Deleting the existing file.")
+        print(f"File {(PACKAGE_DATA_DIR / username / repository / 'tf_model.h5')} already exists. Deleting the existing file.")
         os.remove((PACKAGE_DATA_DIR / username / repository / "tf_model.h5"))  # Delete the existing file
     if os.path.exists((PACKAGE_DATA_DIR / username / repository / "tf_model.keras")):
-        print(f"File {(PACKAGE_DATA_DIR / username / repository / "tf_model.keras")} already exists. Deleting the existing file.")
+        print(f"File {(PACKAGE_DATA_DIR / username / repository / 'tf_model.keras')} already exists. Deleting the existing file.")
         os.remove((PACKAGE_DATA_DIR / username / repository / "tf_model.keras"))  # Delete the existing file
     if os.path.exists((PACKAGE_DATA_DIR / username / repository / "config.json")):
-        print(f"File {(PACKAGE_DATA_DIR / username / repository / "config.json")} already exists. Deleting the existing file.")
+        print(f"File {(PACKAGE_DATA_DIR / username / repository / 'config.json')} already exists. Deleting the existing file.")
         os.remove((PACKAGE_DATA_DIR / username / repository / "config.json"))  # Delete the existing file
     if os.path.exists((PACKAGE_DATA_DIR / username / repository / "model.weights.h5")):
-        print(f"File {(PACKAGE_DATA_DIR / username / repository / "model.weights.h5")} already exists. Deleting the existing file.")
+        print(f"File {(PACKAGE_DATA_DIR / username / repository / 'model.weights.h5')} already exists. Deleting the existing file.")
         os.remove((PACKAGE_DATA_DIR / username / repository / "model.weights.h5"))  # Delete the existing file
-    # Try downloading the model as tf_model.h5 or tf_model.keras
     try:
         tf_model_path = hf_hub_download(repo_id=model_id, filename="tf_model.h5")
 
@@ -46,7 +45,6 @@ def download_model_from_huggingface(username: str, repository: str, model_id: st
         except:
             raise FileNotFoundError("No TensorFlow model found in the repo with names 'tf_model.h5' or 'tf_model.keras'.")
     
-    # If the user specifies a custom filename, override the default name
 
     configpath = "0"
     pconfigpath = "0"
@@ -55,7 +53,7 @@ def download_model_from_huggingface(username: str, repository: str, model_id: st
     try:
         configpath = hf_hub_download(repo_id=model_id, filename="config.json")
 
-        configfilename = "config.json"  # Use the default name if tf_model.h5 is found
+        configfilename = "config.json" 
     except:
         warnings.warn("No model configuration file found at the requested directory. Warning: file 'config.json' was not found at the requested directory. Skipping the download")
         configpath = "0"
@@ -63,7 +61,7 @@ def download_model_from_huggingface(username: str, repository: str, model_id: st
     try:
         pconfigpath = hf_hub_download(repo_id=model_id, filename="preprocessorconfig.json")
 
-        pconfigfilename = "preprocessorconfig.json"  # Use the default name if tf_model.h5 is found
+        pconfigfilename = "preprocessorconfig.json"  
     except:
         warnings.warn("No preprocessor configuration file found at the requested directory. Warning: file 'preprocessorconfig.json' was not found at the requested directory. Skipping the download")
         pconfigpath = "0"
@@ -73,7 +71,6 @@ def download_model_from_huggingface(username: str, repository: str, model_id: st
     else:
         (PACKAGE_DATA_DIR / username / repository).mkdir(parents=True, exist_ok=True)
     
-    # Move the downloaded model to the package's data/models folder with the desired filename
     model_cache_path = PACKAGE_DATA_DIR / username / repository / filename
     os.rename(tf_model_path, model_cache_path)
     if configfilename != "0":
@@ -88,7 +85,7 @@ def download_model_from_huggingface(username: str, repository: str, model_id: st
 
 def clear_model_cache():
     shutil.rmtree(PACKAGE_DATA_DIR)
-    PACKAGE_DATA_DIR.mkdir(parents=True, exist_ok=True)  # Create the directory if it doesn't exist
+    PACKAGE_DATA_DIR.mkdir(parents=True, exist_ok=True)  
 
 
 

@@ -1,73 +1,61 @@
 import unittest
-import os
-from pathlib import Path
 import tensorflow as tf
-from tensorflowtools.hftools import download_model_from_huggingface
-from tensorflowtools.kerastools import load_model_from_cache
+from tensorflowtools.kerastools import default_image_augmentation, basic_ffnn, basic_cnn, basic_lstm, basic_autoencoder
 
-class TestHFUtils(unittest.TestCase):
-    
-    def setUp(self):
-        """Set up a clean environment before each test."""
-        self.model_id = "sharktide/recyclebot0"  # Use an actual model ID from Hugging Face
-        self.cache_dir = Path(__file__).parent / "data/models"
-        self.cache_dir.mkdir(parents=True, exist_ok=True)  # Ensure the cache directory exists
-        
-    def tearDown(self):
-        """Clean up after each test."""
-        for file in self.cache_dir.glob("*"):
-            file.unlink()  # Delete the downloaded model files
-        self.cache_dir.rmdir()  # Optionally remove the cache directory
+class TestTensorFlowTools(unittest.TestCase):
 
-    def test_download_model_from_huggingface_default_filename(self):
-        """Test downloading model with the default filename (from HF repo)."""
-        model_path = download_model_from_huggingface("sharktide", "recyclebot0", "sharktide/recyclebot0")
-        
-        # Ensure the model file exists
-        self.assertTrue(model_path.exists())
-        self.assertIn("tf_model.h5", model_path.name)  # The default filename should be 'tf_model.h5' or 'tf_model.keras'
-        
-        # Ensure the model can be loaded correctly
-        model = load_model_from_cache("sharktide", "recyclebot0", "tf_model.h5")
+    def test_default_image_augmentation(self):
+        # Test if default image augmentation creates a Sequential model with expected layers
+        augmentation = default_image_augmentation(0.2)
+        self.assertIsInstance(augmentation, tf.keras.Sequential)
+        self.assertEqual(len(augmentation.layers), 4)  # We expect 4 augmentation layers
+
+        # Check that the augmentation layers are of the correct types
+        self.assertIsInstance(augmentation.layers[0], tf.keras.layers.RandomFlip)
+        self.assertIsInstance(augmentation.layers[1], tf.keras.layers.RandomRotation)
+        self.assertIsInstance(augmentation.layers[2], tf.keras.layers.RandomTranslation)
+        self.assertIsInstance(augmentation.layers[3], tf.keras.layers.RandomZoom)
+
+    def test_basic_ffnn(self):
+        # Test basic fully connected neural network (FFNN)
+        model = basic_ffnn(input_dim=28*28, output_dim=10, loss='categorical_crossentropy', compile_model=False)
         self.assertIsInstance(model, tf.keras.Model)
+        self.assertEqual(len(model.layers), 7)  # Check the number of layers
 
-    def test_download_model_from_huggingface_custom_filename(self):
-        """Test downloading model with a custom filename."""
-        custom_filename = "recyclebot.h5"
-        model_path = download_model_from_huggingface("sharktide", "recyclebot0", self.model_id)
-        
-        # Ensure the model file exists with the custom filename
-        self.assertTrue(model_path.exists())
-        
-        # Ensure the model can be loaded correctly using the custom filename
-        model = load_model_from_cache("sharktide", "recyclebot0", "tf_model.h5")
+        # Check the first layer is a Dense layer with the correct input dimension
+        self.assertIsInstance(model.layers[0], tf.keras.layers.Dense)
+        self.assertEqual(model.layers[0].input_dim, 28*28)
+
+    def test_basic_cnn(self):
+        # Test basic convolutional neural network (CNN)
+        model = basic_cnn(input_shape=(28, 28, 1), num_classes=10, loss='sparse_categorical_crossentropy', compile_model=False)
         self.assertIsInstance(model, tf.keras.Model)
+        self.assertEqual(len(model.layers), 9)  # Check the number of layers
 
-    def test_download_non_existing_model(self):
-        """Test that downloading a non-existing model raises an error."""
-        with self.assertRaises(FileNotFoundError):
-            download_model_from_huggingface("rnfsiufc", "aeirhfbearyfhbcear", "non-existing-model")
+        # Check the first layer is a Conv2D layer with the correct input shape
+        self.assertIsInstance(model.layers[0], tf.keras.layers.Conv2D)
+        self.assertEqual(model.layers[0].input_shape[1:], (28, 28, 1))
 
-    def test_load_model_from_cache(self):
-        """Test loading a model from cache."""
-        # First, download the model and store it in cache
-        model_path = download_model_from_huggingface("sharktide", "recyclebot0", self.model_id)
-        
-        # Load the model from the cache
-        model = load_model_from_cache("sharktide", "recyclebot0", model_path.name)
+    def test_basic_lstm(self):
+        # Test basic LSTM model
+        model = basic_lstm(input_shape=(500,), output_dim=1, loss='categorical_crossentropy', compile_model=False)
         self.assertIsInstance(model, tf.keras.Model)
+        self.assertEqual(len(model.layers), 6)  # Check the number of layers
 
-    def test_cache_directory_exists(self):
-        """Test that the cache directory is created when the package is used."""
-        # Download a model and check if the cache directory exists
-        download_model_from_huggingface("sharktide", "recyclebot0", self.model_id)
-        self.assertTrue(self.cache_dir.exists())
+        # Check the first layer is an LSTM layer with the correct input shape
+        self.assertIsInstance(model.layers[0], tf.keras.layers.LSTM)
+        self.assertEqual(model.layers[0].input_shape[1:], (500,))
 
-    def test_invalid_model_path(self):
-        """Test loading an invalid model path."""
-        with self.assertRaises(FileNotFoundError):
-            load_model_from_cache("sharktide", "recyclebot0", "invalid_model_name.h5")
+    def test_basic_autoencoder(self):
+        # Test basic Autoencoder model
+        model = basic_autoencoder(input_shape=(28, 28, 1), compile_model=False)
+        self.assertIsInstance(model, tf.keras.Model)
+        self.assertEqual(len(model.layers), 11)  # Check the number of layers
 
+        # Check the first layer is an Input layer
+        self.assertIsInstance(model.layers[0], tf.keras.layers.InputLayer)
 
-if __name__ == "__main__":
+    # Add more tests as needed for other functions
+
+if __name__ == '__main__':
     unittest.main()

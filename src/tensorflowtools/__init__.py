@@ -3,9 +3,15 @@ from .hftools import download_model_from_huggingface, clear_model_cache
 from .kerastools import load_from_hf_cache
 
 __all__ = [
-    "download_model_from_huggingface",  # Expose this function when importing tftools
+    "download_model_from_huggingface",  
     "clear_model_cache",
-    "load_from_hf_cache",            # Expose this function as well
+    "load_from_hf_cache",                       
+    "default_image_augmentation",
+    "basic_ffnn",
+    "basic_cnn",
+    "basic_lstm",
+    "basic_autoencoder"
+
 ]
 
 
