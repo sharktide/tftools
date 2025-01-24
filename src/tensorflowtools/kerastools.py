@@ -2,9 +2,16 @@ import tensorflow as tf
 from pathlib import Path
 import pkg_resources
 import warnings
+import os
 
-# Define the path to the models directory in the package's data folder
-PACKAGE_DATA_DIR = Path(pkg_resources.resource_filename('tensorflowtools', 'data')) / "models" / "huggingface"
+# Define the cache directory for your library
+CACHE_DIR = Path(os.path.expanduser("~/.cache/tensorflowtools"))
+
+# Create the huggingface subdirectory within the cache directory
+HUGGINGFACE_DIR = CACHE_DIR / "huggingface"
+HUGGINGFACE_DIR.mkdir(parents=True, exist_ok=True)
+
+PACKAGE_DATA_DIR = HUGGINGFACE_DIR
 
 def load_from_hf_cache(username: str, repository: str,  model_name: str):
     """

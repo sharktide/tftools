@@ -5,10 +5,14 @@ import pkg_resources
 import warnings
 import shutil
 
+# Define the cache directory for your library
+CACHE_DIR = Path(os.path.expanduser("~/.cache/tensorflowtools"))
 
-# Define the directory to store models in the package’s data directory
-PACKAGE_DATA_DIR = Path(pkg_resources.resource_filename('tensorflowtools', 'data')) / "models" / "huggingface"
-PACKAGE_DATA_DIR.mkdir(parents=True, exist_ok=True)  # Create the directory if it doesn't exist
+# Create the huggingface subdirectory within the cache directory
+HUGGINGFACE_DIR = CACHE_DIR / "huggingface"
+HUGGINGFACE_DIR.mkdir(parents=True, exist_ok=True)
+
+PACKAGE_DATA_DIR = HUGGINGFACE_DIR
 
 def download_model_from_huggingface(username: str, repository: str, model_id: str):
     """

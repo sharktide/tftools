@@ -1,4 +1,4 @@
-# TFtools 0.1.0
+# TFtools 0.1.1
 
 
 ### TFtools Latest
@@ -137,7 +137,7 @@ This clears the model cache; all downloaded models and configuration files will 
 
 This loads a model using tf.keras.models.load_model() from tensorflowtools's cache. Use with the hftools submodule to download a model to the cache.
 
-Warning: This does not currently work in google colab. We are working to resolve this issue.
+
 
 
 ##### Example
