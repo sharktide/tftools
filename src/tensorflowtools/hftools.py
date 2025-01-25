@@ -1,95 +1,93 @@
 import os
+import requests
 from pathlib import Path
-from huggingface_hub import hf_hub_download
-import pkg_resources
-import warnings
+import tensorflow as tf
 import shutil
+import warnings
 
-# Define the cache directory for your library
+# Custom cache directory where models will be stored
 CACHE_DIR = Path(os.path.expanduser("~/.cache/tensorflowtools"))
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-# Create the huggingface subdirectory within the cache directory
 HUGGINGFACE_DIR = CACHE_DIR / "huggingface"
 HUGGINGFACE_DIR.mkdir(parents=True, exist_ok=True)
 
-PACKAGE_DATA_DIR = HUGGINGFACE_DIR
+PACKAGE_DATA_DIR = HUGGINGFACE_DIR  # Directory to store all models
 
-def download_model_from_huggingface(username: str, repository: str, model_id: str):
+def get_model_folder(username: str, repository: str):
     """
-    Downloads a TensorFlow model from a Hugging Face repository and stores it in the package's data directory.
-    
-
-    :param model_id: The Hugging Face model identifier (repo name) eg. sharktide/recyclebot0
-    :param username: The name of the username of the publisher. eg. sharktide
-    :param repository: The name of the repository of the model. eg. recyclebot0
-    :return: Path to the downloaded model file
+    Returns the folder path where the model will be stored.
     """
+    return PACKAGE_DATA_DIR / username / repository
+
+def download_model_from_huggingface(username:str, repository:str, model_filename:str):
+    """
+    Downloads a model from huggingface
+    :param username: the username of the model owner
+    :param repository: the repository of the model
+    :param model_filename: the model filename to download along with config.json and preprocessorconfig.json. Usually tf_model.h5 or tf_model.keras
+    :return: downloaded model path. Not required if used with tensorflowtools.kerastools' load_from_hf_cache
+    """
+    model_folder = get_model_folder(username, repository)
+
+    model_url = f"https://huggingface.co/{username}/{repository}/resolve/main/{model_filename}?download=true"
+    model_cache_path = model_folder / model_filename
+
+        # If the model already exists, no need to download it again
+    if model_folder.exists():
+        warnings.warn(f"Model already exists at {model_folder}. Deleting and re-downloading it.")
+        shutil.rmtree(model_folder)
     
-
-    if os.path.exists((PACKAGE_DATA_DIR / username / repository / "tf_model.h5")):
-        print(f"File {(PACKAGE_DATA_DIR / username / repository / 'tf_model.h5')} already exists. Deleting the existing file.")
-        os.remove((PACKAGE_DATA_DIR / username / repository / "tf_model.h5"))  # Delete the existing file
-    if os.path.exists((PACKAGE_DATA_DIR / username / repository / "tf_model.keras")):
-        print(f"File {(PACKAGE_DATA_DIR / username / repository / 'tf_model.keras')} already exists. Deleting the existing file.")
-        os.remove((PACKAGE_DATA_DIR / username / repository / "tf_model.keras"))  # Delete the existing file
-    if os.path.exists((PACKAGE_DATA_DIR / username / repository / "config.json")):
-        print(f"File {(PACKAGE_DATA_DIR / username / repository / 'config.json')} already exists. Deleting the existing file.")
-        os.remove((PACKAGE_DATA_DIR / username / repository / "config.json"))  # Delete the existing file
-    if os.path.exists((PACKAGE_DATA_DIR / username / repository / "model.weights.h5")):
-        print(f"File {(PACKAGE_DATA_DIR / username / repository / 'model.weights.h5')} already exists. Deleting the existing file.")
-        os.remove((PACKAGE_DATA_DIR / username / repository / "model.weights.h5"))  # Delete the existing file
-    try:
-        tf_model_path = hf_hub_download(repo_id=model_id, filename="tf_model.h5")
-
-        filename = "tf_model.h5"  # Use the default name if tf_model.h5 is found
-    except:
-        try:
-            tf_model_path = hf_hub_download(repo_id=model_id, filename="tf_model.keras")
-            filename = "tf_model.keras"  # Use the default name if tf_model.keras is found
-        except:
-            raise FileNotFoundError("No TensorFlow model found in the repo with names 'tf_model.h5' or 'tf_model.keras'.")
-    
-
-    configpath = "0"
-    pconfigpath = "0"
+    model_folder.mkdir(parents=True, exist_ok=True)
 
 
-    try:
-        configpath = hf_hub_download(repo_id=model_id, filename="config.json")
-
-        configfilename = "config.json" 
-    except:
-        warnings.warn("No model configuration file found at the requested directory. Warning: file 'config.json' was not found at the requested directory. Skipping the download")
-        configpath = "0"
-    
-    try:
-        pconfigpath = hf_hub_download(repo_id=model_id, filename="preprocessorconfig.json")
-
-        pconfigfilename = "preprocessorconfig.json"  
-    except:
-        warnings.warn("No preprocessor configuration file found at the requested directory. Warning: file 'preprocessorconfig.json' was not found at the requested directory. Skipping the download")
-        pconfigpath = "0"
-
-    if os.path.exists((PACKAGE_DATA_DIR / username / repository)):
-        pass
+    print(f"Downloading model from {model_url}...")
+    response = requests.get(model_url, stream=True)
+    if response.status_code == 200:
+        with open(model_cache_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=1024):
+                if chunk:
+                    f.write(chunk)
+        print(f"Model downloaded and saved to {model_cache_path}")
     else:
-        (PACKAGE_DATA_DIR / username / repository).mkdir(parents=True, exist_ok=True)
+        raise Exception(f"Failed to download model from {model_url}. HTTP status code: {response.status_code}")
     
-    model_cache_path = PACKAGE_DATA_DIR / username / repository / filename
-    os.rename(tf_model_path, model_cache_path)
-    if configfilename != "0":
-        config_cache_path = PACKAGE_DATA_DIR / username / repository / configfilename
-        os.rename(configpath, config_cache_path)
+    
+    config_url = f"https://huggingface.co/{username}/{repository}/resolve/main/config.json?download=true"
+    print(f"Downloading config.json from {model_url}...")
 
-    if pconfigpath != "0":
-        pconfig_cache_path = PACKAGE_DATA_DIR / username / repository / pconfigfilename
-        os.rename(pconfigpath, pconfig_cache_path)
-    
-    return model_cache_path
+    response = requests.get(config_url, stream=True)
+    config_cache_path = model_folder / "config.json"
+    if response.status_code == 200:
+        with open(config_cache_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=1024):
+                if chunk:
+                    f.write(chunk)
+        print(f"Configuration file downloaded and saved to {model_cache_path}")
+    else:
+        warnings.warn(f"Failed to download config.json from {model_url}. HTTP status code: {response.status_code}")
+
+
+    pconfig_url = f"https://huggingface.co/{username}/{repository}/resolve/main/preprocessorconfig.json?download=true"
+    print(f"Downloading preprocessorconfig.json from {model_url}...")
+
+    response = requests.get(pconfig_url, stream=True)
+    config_cache_path = model_folder / "preprocessorconfig.json"
+    if response.status_code == 200:
+        with open(config_cache_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=1024):
+                if chunk:
+                    f.write(chunk)
+        print(f"Preprocessor Configuration file downloaded and saved to {model_cache_path}")
+    else:
+        warnings.warn(f"Failed to download preprocessorconfig.json from {model_url}. HTTP status code: {response.status_code}")
 
 def clear_model_cache():
+    """
+    Clears anything in the downloaded model cache.
+    """
     shutil.rmtree(PACKAGE_DATA_DIR)
-    PACKAGE_DATA_DIR.mkdir(parents=True, exist_ok=True)  
+    PACKAGE_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
 
