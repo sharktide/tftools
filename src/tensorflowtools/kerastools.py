@@ -4,10 +4,8 @@ import pkg_resources
 import warnings
 import os
 
-# Define the cache directory for your library
 CACHE_DIR = Path(os.path.expanduser("~/.cache/tensorflowtools"))
 
-# Create the huggingface subdirectory within the cache directory
 HUGGINGFACE_DIR = CACHE_DIR / "huggingface"
 HUGGINGFACE_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -24,7 +22,6 @@ def load_from_hf_cache(username: str, repository: str,  model_name: str):
     if not model_path.exists():
         raise FileNotFoundError(f"The model {model_name} is not found in the huggingface package data directory.")
     
-    # Load the model
     model = tf.keras.models.load_model(model_path)
     return model
 

@@ -5,14 +5,13 @@ import tensorflow as tf
 import shutil
 import warnings
 
-# Custom cache directory where models will be stored
 CACHE_DIR = Path(os.path.expanduser("~/.cache/tensorflowtools"))
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 HUGGINGFACE_DIR = CACHE_DIR / "huggingface"
 HUGGINGFACE_DIR.mkdir(parents=True, exist_ok=True)
 
-PACKAGE_DATA_DIR = HUGGINGFACE_DIR  # Directory to store all models
+PACKAGE_DATA_DIR = HUGGINGFACE_DIR  
 
 def get_model_folder(username: str, repository: str):
     """
@@ -33,7 +32,6 @@ def download_model_from_huggingface(username:str, repository:str, model_filename
     model_url = f"https://huggingface.co/{username}/{repository}/resolve/main/{model_filename}?download=true"
     model_cache_path = model_folder / model_filename
 
-        # If the model already exists, no need to download it again
     if model_folder.exists():
         warnings.warn(f"Model already exists at {model_folder}. Deleting and re-downloading it.")
         shutil.rmtree(model_folder)
