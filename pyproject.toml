@@ -1,13 +1,20 @@
 [build-system]
-requires = ["setuptools>=61.0", "tensorflow"]
+requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "tensorflowtools"
-version = "1.0.0"
+version = "2.0.0.post0"
 authors = [
   { name="Rihaan Meher", email="meherrihaan@gmail.com" },
 ]
+
+dependencies = [
+  "requests",
+  "huggingface_hub",
+  "textfmt"
+]
+
 description = "A small package with various tensorflow uitlities independent of Tensorflow Addons"
 readme = "README.md"
 requires-python = ">=3.9"

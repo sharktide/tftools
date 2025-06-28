@@ -1,8 +1,8 @@
 import tensorflow as tf
 from pathlib import Path
-import pkg_resources
 import warnings
 import os
+from textformat import bcolors
 
 CACHE_DIR = Path(os.path.expanduser("~/.cache/tensorflowtools"))
 
@@ -13,11 +13,12 @@ PACKAGE_DATA_DIR = HUGGINGFACE_DIR
 
 def load_from_hf_cache(username: str, repository: str,  model_name: str):
     """
-    Loads a TensorFlow model from the package's data directory.
+    @deprecated Use hftools.load_model instead
 
     :param model_name: Name of the model to load (e.g., 'custom_model.h5')
     :return: Loaded TensorFlow model
     """
+    warnings.warn(f"{bcolors.WARNING}This is scheduled to be removed. Use hftools.load_model instead.{bcolors.ENDC}", category=DeprecationWarning, stacklevel=2)
     model_path = PACKAGE_DATA_DIR / username / repository / model_name
     if not model_path.exists():
         raise FileNotFoundError(f"The model {model_name} is not found in the huggingface package data directory.")
@@ -68,7 +69,7 @@ def basic_ffnn(input_dim, output_dim, loss, activation, compile_model=True):
         tf.keras.layers.Dense(64, activation='LeakyReLU', kernel_regularizer=l2(0.001)),
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.4),
-        tf.keras.layers.Dense(output_dim, activation=activation)  # for multi-class classification
+        tf.keras.layers.Dense(output_dim, activation=activation)
     ])
     
     if compile_model:
@@ -196,7 +197,7 @@ def basic_autoencoder(input_shape, compile_model=True):
 
 
 
-#Copyright 2025 Rihaan Meher
+#   Copyright 2025 Rihaan Meher
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
