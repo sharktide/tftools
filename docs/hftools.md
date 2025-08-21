@@ -58,9 +58,6 @@ model_name: Filename of the model (e.g. ``tf_model.h5``).
 
 custom_objects: If True, looks for ``custom_objects.py``.
 
-> [!CAUTION]
-> Using ``custom_objects=True`` can result in the execution of untrusted code unsandboxed on your computer. Only do this if you trust the authors and have verified that the model cache directory has not been tampered with
-
 </details>
 
 <details>
@@ -108,4 +105,7 @@ CUSTOM_OBJECTS = {
 }
 ```
 
-This will be used automatically during model loading.
+This will be used automatically during model loading if the appropriate flags are passed in ``load_model``
+
+> [!CAUTION]
+> Using ``custom_objects=True`` can result in the execution of untrusted code unsandboxed on your computer. Only do this if you trust the authors and have verified that the model cache directory has not been tampered with.
