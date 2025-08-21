@@ -3,7 +3,8 @@ from .core import (
     clear_model_cache,
     list_models,
     load_model,
-    delete_model
+    delete_model,
+    get_cache_dir,
 )
 
 __all__ = [
@@ -11,7 +12,8 @@ __all__ = [
     "clear_model_cache",
     "list_models",
     "load_model",
-    "delete_model"
+    "delete_model",
+    "get_cache_dir",
 ]
 
 #   Copyright 2025 Rihaan Meher

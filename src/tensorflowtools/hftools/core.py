@@ -29,7 +29,7 @@ def get_model_folder(username: str, repository: str) -> Path:
     """
     return PACKAGE_DATA_DIR / username / repository
 
-def download_model(username: str, repository: str, redownload=False):
+def download_model(username: str, repository: str, redownload: bool = False):
     """
     Downloads the full model repository from Hugging Face (without using git or symlinks),
     and displays a summary of all downloaded files in a formatted table.
@@ -59,7 +59,7 @@ def download_model(username: str, repository: str, redownload=False):
         local_path = model_folder / file
         local_path.parent.mkdir(parents=True, exist_ok=True)
 
-        _download_with_progress(file_url, local_path, download_color=Colors.CYAN, complete_color=Colors.MAGENTA)
+        _download_with_progress(file_url, local_path, download_color=Colors.CYAN, complete_color=Colors.GREEN)
 
         size = local_path.stat().st_size
         downloaded_files.append([file, _format_size(size)])
@@ -71,7 +71,7 @@ def download_model(username: str, repository: str, redownload=False):
         table = TableFormatter.generate(["Filename", "Size"], downloaded_files)
         print(table)
 
-def load_model(username: str, repository: str, model_name: str, custom_objects: bool = False):
+def load_model(username: str, repository: str, model_name: str, custom_objects: dict | None | bool = False):
     """
     Loads a Tensorflow Keras model from a Hugging Face repo path.
     Supports: .keras, .h5
@@ -99,7 +99,7 @@ def load_model(username: str, repository: str, model_name: str, custom_objects: 
         custom_objects = None
     import tensorflow as tf
 
-    tf.keras.models.load_model(model_path, custom_objects=custom_objects)
+    return tf.keras.models.load_model(model_path, custom_objects=custom_objects) # type: ignore
 
 def clear_model_cache():
     """
@@ -160,6 +160,10 @@ def list_models():
         print(TableFormatter.generate(headers, data))
     else:
         print(f"{bcolors.WARNING}No models found in cache.{bcolors.ENDC}")
+
+def get_cache_dir():
+    """Gets the cache dir where user/model folders are kept"""
+    return str(HUGGINGFACE_DIR)
 
 #   Copyright 2025 Rihaan Meher
 #

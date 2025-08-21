@@ -2,6 +2,7 @@ import requests
 import importlib.util
 import sys
 from textformat.progress import DownloadProgressBar
+from textformat import TextFormat
 from pathlib import Path
 
 def _download_with_progress(url: str, output_path: Path, download_color, complete_color):
@@ -10,8 +11,8 @@ def _download_with_progress(url: str, output_path: Path, download_color, complet
 
     if response.status_code != 200:
         raise Exception(f"Failed to download from {url}. HTTP status: {response.status_code}")
-
-    progress = DownloadProgressBar(total, prefix=output_path.name, 
+    print(output_path.name)
+    progress = DownloadProgressBar(total, prefix=TextFormat.style("Fetching", TextFormat.COLORS["magenta"]), 
                            download_color=download_color, complete_color=complete_color)
     with open(output_path, "wb") as f:
         for chunk in response.iter_content(chunk_size=8192):
@@ -29,10 +30,10 @@ def _load_custom_objects_from_file(file_path: Path) -> dict:
 
     module_name = f"custom_objects_{hash(file_path)}"
     spec = importlib.util.spec_from_file_location(module_name, str(file_path))
-    module = importlib.util.module_from_spec(spec)
+    module = importlib.util.module_from_spec(spec) # type: ignore
     sys.modules[module_name] = module
     try:
-        spec.loader.exec_module(module)
+        spec.loader.exec_module(module) # type: ignore
         return getattr(module, "CUSTOM_OBJECTS", {})
     except Exception as e:
         raise ImportError(f"Failed to import CUSTOM_OBJECTS from {file_path}: {e}")
