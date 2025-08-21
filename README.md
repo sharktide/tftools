@@ -1,4 +1,4 @@
-# TensorFlowTools 2.0.2
+# TensorFlowTools 2.0.4
 
 ### TensorFlowTools Latest
 

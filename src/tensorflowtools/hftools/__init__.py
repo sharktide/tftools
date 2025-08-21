@@ -5,6 +5,7 @@ from .core import (
     load_model,
     delete_model,
     get_cache_dir,
+    get_model_folder
 )
 
 __all__ = [
@@ -14,6 +15,7 @@ __all__ = [
     "load_model",
     "delete_model",
     "get_cache_dir",
+    "get_model_folder"
 ]
 
 #   Copyright 2025 Rihaan Meher
